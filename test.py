@@ -1,4 +1,4 @@
-traceoutput = """traceroute to google.com (142.250.69.238), 30 hops max, 60 byte packets
+tracerouteoutput = """traceroute to google.com (142.250.69.238), 30 hops max, 60 byte packets
  1  _gateway (10.0.2.2)  0.365 ms  0.290 ms  0.213 ms
  2  10.103.1.254 (10.103.1.254)  2.183 ms  2.135 ms  2.086 ms
  3  * * *
@@ -10,18 +10,35 @@ traceoutput = """traceroute to google.com (142.250.69.238), 30 hops max, 60 byte
  9  142.251.49.27 (142.251.49.27)  5.598 ms  5.062 ms  5.392 ms
 10  142.251.61.183 (142.251.61.183)  3.750 ms  3.963 ms  4.148 ms
 11  den08s05-in-f14.1e100.net (142.250.69.238)  3.170 ms  3.105 ms  3.951 ms"""
-
-line = 2
-linelist = traceoutput.split('\n')
-hopnum = linelist[line][:2].strip()
-rawtimes = linelist[line].split(')  ')[1].split(' ')
-times = [rawtimes[0], rawtimes[3], rawtimes[6]]
-ip = (linelist[line].split('(')[1]).split(')')[0]
-hostname = linelist[line].split('  ')[1].split(' (')[0]
-if hostname == ip:
-    hostname = 'None'
-else:
-    None
-dictionary = {'hop': hopnum, 'ip': ip, 'hostname': hostname, 'rtt': times}
-
-print(linelist)
+def parse_traceroute(traceroute_output):
+    finallist = []
+    linelist = traceroute_output.split('\n')
+    del linelist[0]
+    for currentline in linelist:
+        if "*" in currentline:
+            hopnum = currentline[:2].strip()
+            dictionary = {
+                'hop': hopnum, 
+                'ip': 'None', 
+                'hostname': 'None', 
+                'rtt': ['None', 'None', 'None']
+                }
+        else:
+            hopnum = currentline[:2].strip()
+            rawtimes = currentline.split(')  ')[1].split(' ')
+            times = [rawtimes[0], rawtimes[3], rawtimes[6]]
+            ip = (currentline.split('(')[1]).split(')')[0]
+            hostname = currentline.split('  ')[1].split(' (')[0]
+            if hostname == ip:
+                hostname = 'None'
+            else:
+                None
+            dictionary = {
+                'hop': hopnum, 
+                'ip': ip, 
+                'hostname': hostname, 
+                'rtt': times
+                }
+        finallist.append(dictionary)
+    return finallist
+print(parse_traceroute(tracerouteoutput))
