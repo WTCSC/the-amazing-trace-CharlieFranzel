@@ -7,22 +7,8 @@ import os
 import subprocess
 
 def execute_traceroute(destination):
-    """
-    Executes a traceroute to the specified destination and returns the output.
-
-    Args:
-        destination (str): The hostname or IP address to trace
-
-    Returns:
-        str: The raw output from the traceroute command
-    """
-    # Your code here
-    # Hint: Use the subprocess module to run the traceroute command
-    # Make sure to handle potential errors
-
-    # Remove this line once you implement the function,
-    # and don't forget to *return* the output
-    pass
+    result = subprocess.run(["traceroute", "-I", destination], capture_output=True, text=True)
+    print(result.stdout)
 
 def parse_traceroute(traceroute_output):
     finallist = []
